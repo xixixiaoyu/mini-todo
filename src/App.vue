@@ -224,8 +224,8 @@ onMounted(() => {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: fit-content;
-  max-height: 100%;
+  height: 100%;
+  max-height: calc(100vh - 8rem);
 }
 
 .stats {
@@ -256,8 +256,7 @@ onMounted(() => {
 
 .todo-list {
   flex: 1;
-  min-height: 150px;
-  max-height: 300px;
+  min-height: 0;
   overflow-y: auto;
 }
 
