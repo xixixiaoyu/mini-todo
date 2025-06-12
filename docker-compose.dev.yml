@@ -9,8 +9,8 @@ services:
     ports:
       - '5173:5173'
     volumes:
-      - ./apps/frontend:/app/apps/frontend
-      - /app/apps/frontend/node_modules
+      - ./apps/frontend/src:/app/apps/frontend/src
+      - ./apps/frontend/public:/app/apps/frontend/public
     environment:
       - NODE_ENV=development
       - VITE_API_URL=http://localhost:3000
@@ -27,12 +27,16 @@ services:
       - '3000:3000'
       - '9229:9229' # 调试端口
     volumes:
-      - ./apps/backend:/app/apps/backend
-      - /app/apps/backend/node_modules
+      - ./apps/backend/src:/app/apps/backend/src
+      - ./apps/backend/test:/app/apps/backend/test
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - DATABASE_URL=postgresql://todolist_user:todolist_password@database-dev:5432/todolist
+      - DB_HOST=database-dev
+      - DB_PORT=5432
+      - DB_USERNAME=todolist_user
+      - DB_PASSWORD=todolist_password
+      - DB_NAME=todolist
       - REDIS_URL=redis://redis-dev:6379
     depends_on:
       - database-dev

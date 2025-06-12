@@ -17,6 +17,9 @@ COPY apps/frontend/package.json ./apps/frontend/
 # 安装依赖
 RUN pnpm install --frozen-lockfile
 
+# 复制前端源代码
+COPY apps/frontend ./apps/frontend
+
 # 暴露端口
 EXPOSE 5173
 

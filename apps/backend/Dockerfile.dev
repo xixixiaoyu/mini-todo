@@ -17,6 +17,9 @@ COPY apps/backend/package.json ./apps/backend/
 # 安装依赖
 RUN pnpm install --frozen-lockfile
 
+# 复制后端源代码
+COPY apps/backend ./apps/backend
+
 # 暴露端口
 EXPOSE 3000 9229
 
