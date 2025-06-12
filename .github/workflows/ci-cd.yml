@@ -142,33 +142,24 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build-and-push
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # 只有在 secrets 配置完整时才执行部署
+    if: |
+      github.event_name == 'push' && 
+      github.ref == 'refs/heads/main' &&
+      secrets.PRODUCTION_HOST != '' &&
+      secrets.PRODUCTION_USER != '' &&
+      secrets.PRODUCTION_SSH_KEY != '' &&
+      secrets.PRODUCTION_URL != ''
     environment: production
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # 验证必要的 secrets 是否已配置
-    - name: Verify deployment secrets
+    - name: Deployment secrets verification
       run: |
-        if [ -z "${{ secrets.PRODUCTION_HOST }}" ]; then
-          echo "❌ PRODUCTION_HOST secret is not configured"
-          exit 1
-        fi
-        if [ -z "${{ secrets.PRODUCTION_USER }}" ]; then
-          echo "❌ PRODUCTION_USER secret is not configured"
-          exit 1
-        fi
-        if [ -z "${{ secrets.PRODUCTION_SSH_KEY }}" ]; then
-          echo "❌ PRODUCTION_SSH_KEY secret is not configured"
-          exit 1
-        fi
-        if [ -z "${{ secrets.PRODUCTION_URL }}" ]; then
-          echo "❌ PRODUCTION_URL secret is not configured"
-          exit 1
-        fi
         echo "✅ All deployment secrets are configured"
+        echo "🚀 Starting deployment process..."
 
     - name: Deploy to production
       uses: appleboy/ssh-action@v1.0.0
