@@ -23,16 +23,16 @@ export const apiConfig = {
 export const endpoints = {
   // 待办事项相关端点
   todos: {
-    list: '/todos',                    // GET - 获取所有待办事项
-    create: '/todos',                  // POST - 创建待办事项
-    getById: (id) => `/todos/${id}`,   // GET - 获取单个待办事项
-    update: (id) => `/todos/${id}`,    // PUT - 更新待办事项
-    delete: (id) => `/todos/${id}`,    // DELETE - 删除待办事项
-    toggle: (id) => `/todos/${id}/toggle`, // PUT - 切换完成状态
-    stats: '/todos/stats',             // GET - 获取统计信息
-    clearCompleted: '/todos/completed', // DELETE - 清除已完成
-    toggleAll: '/todos/toggle-all',    // PUT - 切换所有状态
-    reorder: '/todos/reorder',         // PUT - 重新排序
+    list: 'todos',                    // GET - 获取所有待办事项
+    create: 'todos',                  // POST - 创建待办事项
+    getById: (id) => `todos/${id}`,   // GET - 获取单个待办事项
+    update: (id) => `todos/${id}`,    // PUT - 更新待办事项
+    delete: (id) => `todos/${id}`,    // DELETE - 删除待办事项
+    toggle: (id) => `todos/${id}/toggle`, // PUT - 切换完成状态
+    stats: 'todos/stats',             // GET - 获取统计信息
+    clearCompleted: 'todos/completed', // DELETE - 清除已完成
+    toggleAll: 'todos/toggle-all',    // PUT - 切换所有状态
+    reorder: 'todos/reorder',         // PUT - 重新排序
   },
 }
 

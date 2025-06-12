@@ -33,7 +33,10 @@ class HttpClient {
    * @returns {string} 完整的 URL
    */
   buildURL(endpoint) {
-    return `${this.baseURL}${endpoint}`
+    // 确保 baseURL 以斜杠结尾，endpoint 不以斜杠开头
+    const base = this.baseURL.endsWith('/') ? this.baseURL : `${this.baseURL}/`
+    const path = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint
+    return `${base}${path}`
   }
 
   /**
@@ -106,16 +109,20 @@ class HttpClient {
    * @returns {Promise<any>} 响应数据
    */
   async get(endpoint, params = {}, options = {}) {
-    const url = new URL(this.buildURL(endpoint))
+    let finalEndpoint = endpoint
     
-    // 添加查询参数
-    Object.keys(params).forEach(key => {
-      if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
-        url.searchParams.append(key, params[key])
-      }
-    })
+    // 如果有查询参数，添加到端点
+    if (params && Object.keys(params).length > 0) {
+      const searchParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+          searchParams.append(key, params[key])
+        }
+      })
+      finalEndpoint = `${endpoint}?${searchParams.toString()}`
+    }
 
-    return this.request(url.pathname + url.search, {
+    return this.request(finalEndpoint, {
       method: 'GET',
       ...options,
     })

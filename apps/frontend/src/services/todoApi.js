@@ -216,5 +216,8 @@ class TodoApiService {
 // 创建并导出 API 服务实例
 export const todoApi = new TodoApiService()
 
+// 重新导出 ApiError 供其他模块使用
+export { ApiError }
+
 // 导出服务类供自定义使用
 export default TodoApiService

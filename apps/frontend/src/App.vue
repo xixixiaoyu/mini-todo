@@ -3,91 +3,55 @@ import { ref, computed, onMounted, provide } from 'vue'
 import TodoItem from './components/TodoItem.vue'
 import TodoForm from './components/TodoForm.vue'
 import TodoFilter from './components/TodoFilter.vue'
+import { useTodos } from './services/useTodos.js'
 
-// 响应式数据
-const todos = ref([])
-const filter = ref('all') // all, active, completed
-const nextId = ref(1)
-const searchQuery = ref('')
+// 使用待办事项 Hook
+const {
+  // 响应式数据
+  todos,
+  loading,
+  error,
+  filter,
+  searchQuery,
+  stats,
+  
+  // 计算属性
+  filteredTodos,
+  activeTodosCount,
+  completedTodosCount,
+  totalTodosCount,
+  hasActiveTodos,
+  hasCompletedTodos,
+  allCompleted,
+  
+  // 操作方法
+  addTodo,
+  updateTodo,
+  toggleTodo,
+  deleteTodo,
+  clearCompleted,
+  toggleAll,
+  reorderTodos,
+  
+  // 搜索和过滤
+  setFilter,
+  setSearchQuery,
+  clearSearch,
+  
+  // 工具方法
+  refresh,
+  initialize,
+  clearError,
+} = useTodos()
+
+// 本地状态
 const isDarkMode = ref(false)
 
-// 计算属性
-const filteredTodos = computed(() => {
-  let filtered = todos.value
-
-  // 根据搜索查询过滤
-  if (searchQuery.value.trim()) {
-    const query = searchQuery.value.toLowerCase().trim()
-    filtered = filtered.filter(todo => todo.text.toLowerCase().includes(query))
-  }
-
-  // 根据状态过滤
-  switch (filter.value) {
-    case 'active':
-      return filtered.filter(todo => !todo.completed)
-    case 'completed':
-      return filtered.filter(todo => todo.completed)
-    default:
-      return filtered
-  }
-})
-
-const activeTodosCount = computed(() => {
-  return todos.value.filter(todo => !todo.completed).length
-})
-
-const completedTodosCount = computed(() => {
-  return todos.value.filter(todo => todo.completed).length
-})
-
 // 方法
-const addTodo = text => {
-  if (text.trim()) {
-    todos.value.push({
-      id: nextId.value++,
-      text: text.trim(),
-      completed: false,
-      createdAt: new Date().toISOString(),
-    })
-    saveTodos()
+const editTodo = async (id, newText) => {
+  if (newText && newText.trim()) {
+    await updateTodo(id, { text: newText.trim() })
   }
-}
-
-const toggleTodo = id => {
-  const todo = todos.value.find(t => t.id === id)
-  if (todo) {
-    todo.completed = !todo.completed
-    saveTodos()
-  }
-}
-
-const deleteTodo = id => {
-  const index = todos.value.findIndex(t => t.id === id)
-  if (index > -1) {
-    todos.value.splice(index, 1)
-    saveTodos()
-  }
-}
-
-const editTodo = (id, newText) => {
-  const todo = todos.value.find(t => t.id === id)
-  if (todo && newText.trim()) {
-    todo.text = newText.trim()
-    saveTodos()
-  }
-}
-
-const clearCompleted = () => {
-  todos.value = todos.value.filter(todo => !todo.completed)
-  saveTodos()
-}
-
-const toggleAll = () => {
-  const allCompleted = todos.value.every(todo => todo.completed)
-  todos.value.forEach(todo => {
-    todo.completed = !allCompleted
-  })
-  saveTodos()
 }
 
 // 拖拽排序功能
@@ -101,20 +65,29 @@ const handleDragOver = event => {
   event.dataTransfer.dropEffect = 'move'
 }
 
-const handleDrop = (event, dropIndex) => {
+const handleDrop = async (event, dropIndex) => {
   event.preventDefault()
   const dragIndex = parseInt(event.dataTransfer.getData('text/plain'))
 
   if (dragIndex !== dropIndex) {
     const draggedTodo = filteredTodos.value[dragIndex]
-    const originalDragIndex = todos.value.findIndex(todo => todo.id === draggedTodo.id)
     const dropTodo = filteredTodos.value[dropIndex]
-    const originalDropIndex = todos.value.findIndex(todo => todo.id === dropTodo.id)
-
-    // 重新排序
-    const [removed] = todos.value.splice(originalDragIndex, 1)
-    todos.value.splice(originalDropIndex, 0, removed)
-    saveTodos()
+    
+    // 构建重新排序的数据
+    const reorderItems = []
+    const newOrder = dropTodo.order
+    
+    // 简单的重新排序逻辑
+    filteredTodos.value.forEach((todo, index) => {
+      if (todo.id === draggedTodo.id) {
+        reorderItems.push({ id: todo.id, order: newOrder })
+      } else if (index >= Math.min(dragIndex, dropIndex) && index <= Math.max(dragIndex, dropIndex)) {
+        const offset = dragIndex < dropIndex ? -1 : 1
+        reorderItems.push({ id: todo.id, order: todo.order + offset })
+      }
+    })
+    
+    await reorderTodos(reorderItems)
   }
 }
 
@@ -135,32 +108,12 @@ const updateTheme = () => {
 
 // 搜索功能
 const updateSearch = query => {
-  searchQuery.value = query
+  setSearchQuery(query)
 }
 
-const clearSearch = () => {
-  searchQuery.value = ''
-}
-
-// 本地存储
-const saveTodos = () => {
-  localStorage.setItem('vue-todos', JSON.stringify(todos.value))
-  localStorage.setItem('vue-todos-next-id', nextId.value.toString())
-}
-
-const loadTodos = () => {
-  const saved = localStorage.getItem('vue-todos')
-  const savedNextId = localStorage.getItem('vue-todos-next-id')
+// 本地存储（仅用于主题设置）
+const loadTheme = () => {
   const savedTheme = localStorage.getItem('vue-todos-theme')
-
-  if (saved) {
-    todos.value = JSON.parse(saved)
-  }
-
-  if (savedNextId) {
-    nextId.value = parseInt(savedNextId)
-  }
-
   if (savedTheme) {
     isDarkMode.value = savedTheme === 'dark'
     updateTheme()
@@ -168,8 +121,9 @@ const loadTodos = () => {
 }
 
 // 生命周期
-onMounted(() => {
-  loadTodos()
+onMounted(async () => {
+  loadTheme()
+  await initialize() // 初始化并加载待办事项数据
 })
 
 // 提供暗黑模式状态给子组件
@@ -178,6 +132,20 @@ provide('isDarkMode', isDarkMode)
 
 <template>
   <div class="app" :class="{ 'dark-mode': isDarkMode }">
+    <!-- 错误提示 -->
+    <div v-if="error" class="error-message" @click="clearError">
+      <span>{{ error }}</span>
+      <button class="close-btn">×</button>
+    </div>
+
+    <!-- 加载状态 -->
+    <div v-if="loading" class="loading-overlay">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <span>加载中...</span>
+      </div>
+    </div>
+
     <header class="header">
       <div class="header-content">
         <div class="title-section">
@@ -222,12 +190,12 @@ provide('isDarkMode', isDarkMode)
 
     <main class="main">
       <div class="todo-container">
-        <!-- 添加新任务和搜索 -->
+        <!-- 添加任务表单 -->
         <TodoForm
           :search-query="searchQuery"
           @add-todo="addTodo"
-          @update-search="updateSearch"
-          @clear-search="clearSearch"
+          @update-search="setSearchQuery"
+          @clear-search="() => setSearchQuery('')"
         />
 
         <!-- 任务统计 -->
@@ -249,9 +217,10 @@ provide('isDarkMode', isDarkMode)
         <!-- 过滤器 -->
         <TodoFilter
           v-if="todos.length > 0"
-          v-model="filter"
+          :model-value="filter"
           :active-count="activeTodosCount"
           :completed-count="completedTodosCount"
+          @update:model-value="setFilter"
           @toggle-all="toggleAll"
           @clear-completed="clearCompleted"
         />
@@ -332,6 +301,82 @@ provide('isDarkMode', isDarkMode)
   --accent-color-dark: #6366f1;
   --text-muted: #64748b;
   --text-muted-dark: #94a3b8;
+}
+
+/* 错误提示样式 */
+.error-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.error-message:hover {
+  background: #fecaca;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #dc2626;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 加载状态样式 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.loading-spinner {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #4f46e5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .app {
