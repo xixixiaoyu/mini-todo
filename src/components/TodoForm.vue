@@ -1,12 +1,24 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
+
+// 定义 props
+const props = defineProps({
+  searchQuery: {
+    type: String,
+    default: ''
+  }
+})
 
 // 定义事件
-const emit = defineEmits(['add-todo'])
+const emit = defineEmits(['add-todo', 'update-search', 'clear-search'])
 
 // 响应式数据
 const newTodo = ref('')
 const isComposing = ref(false)
+const showSearch = ref(false)
+
+// 注入暗黑模式状态
+const isDarkMode = inject('isDarkMode', ref(false))
 
 // 方法
 const handleSubmit = () => {
@@ -30,10 +42,58 @@ const handleCompositionStart = () => {
 const handleCompositionEnd = () => {
   isComposing.value = false
 }
+
+// 搜索相关方法
+const toggleSearch = () => {
+  showSearch.value = !showSearch.value
+  if (!showSearch.value) {
+    emit('clear-search')
+  }
+}
+
+const handleSearchInput = (event) => {
+  emit('update-search', event.target.value)
+}
+
+const clearSearch = () => {
+  emit('clear-search')
+  showSearch.value = false
+}
 </script>
 
 <template>
-  <div class="todo-form">
+  <div class="todo-form" :class="{ 'dark-mode': isDarkMode }">
+    <!-- 搜索栏 -->
+    <div v-if="showSearch" class="search-container">
+      <div class="search-group">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input
+          :value="searchQuery"
+          @input="handleSearchInput"
+          type="text"
+          placeholder="搜索任务..."
+          class="search-input"
+          maxlength="100"
+        />
+        <button 
+          v-if="searchQuery"
+          type="button" 
+          class="clear-search-button"
+          @click="clearSearch"
+          title="清除搜索"
+        >
+          <svg class="clear-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 添加任务表单 -->
     <form @submit.prevent="handleSubmit" class="form">
       <div class="input-group">
         <input
@@ -47,6 +107,18 @@ const handleCompositionEnd = () => {
           @compositionend="handleCompositionEnd"
           autofocus
         />
+        <button 
+          type="button" 
+          class="search-toggle-button"
+          @click="toggleSearch"
+          :class="{ 'active': showSearch }"
+          title="搜索任务"
+        >
+          <svg class="search-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </button>
         <button 
           type="submit" 
           class="add-button"
@@ -76,6 +148,70 @@ const handleCompositionEnd = () => {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
+/* 搜索容器样式 */
+.search-container {
+  margin-bottom: 1rem;
+  animation: slideDown 0.3s ease;
+}
+
+.search-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  width: 18px;
+  height: 18px;
+  color: #9ca3af;
+  stroke-width: 2;
+  z-index: 1;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: white;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.clear-search-button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: #f3f4f6;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.clear-search-button:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.clear-icon {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2;
+}
+
 .form {
   max-width: 100%;
 }
@@ -96,6 +232,37 @@ const handleCompositionEnd = () => {
   background: white;
   transition: all 0.2s ease;
   outline: none;
+}
+
+.search-toggle-button {
+  width: 44px;
+  height: 44px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.search-toggle-button:hover {
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+.search-toggle-button.active {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: white;
+}
+
+.search-toggle-icon {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
 }
 
 .todo-input:focus {
@@ -180,6 +347,95 @@ const handleCompositionEnd = () => {
   font-weight: 600;
 }
 
+/* 暗黑模式样式 */
+.todo-form.dark-mode .search-icon {
+  color: #64748b;
+}
+
+.todo-form.dark-mode .search-input {
+  border: 2px solid #475569;
+  background: #334155;
+  color: #f1f5f9;
+}
+
+.todo-form.dark-mode .search-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.todo-form.dark-mode .search-input::placeholder {
+  color: #64748b;
+}
+
+.todo-form.dark-mode .clear-search-button {
+  background: #475569;
+  color: #94a3b8;
+}
+
+.todo-form.dark-mode .clear-search-button:hover {
+  background: #64748b;
+  color: #f1f5f9;
+}
+
+.todo-form.dark-mode .todo-input {
+  border: 2px solid #475569;
+  background: #334155;
+  color: #f1f5f9;
+}
+
+.todo-form.dark-mode .todo-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.todo-form.dark-mode .todo-input::placeholder {
+  color: #64748b;
+}
+
+.todo-form.dark-mode .search-toggle-button {
+  border: 2px solid #475569;
+  background: #334155;
+  color: #94a3b8;
+}
+
+.todo-form.dark-mode .search-toggle-button:hover {
+  border-color: #6366f1;
+  color: #6366f1;
+}
+
+.todo-form.dark-mode .search-toggle-button.active {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: white;
+}
+
+.todo-form.dark-mode .add-button {
+  background: #6366f1;
+}
+
+.todo-form.dark-mode .add-button:hover:not(:disabled) {
+  background: #5b21b6;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.todo-form.dark-mode .add-button:disabled {
+  background: #475569;
+}
+
+.todo-form.dark-mode .input-hint {
+  color: #94a3b8;
+}
+
+.todo-form.dark-mode .char-count {
+  background: #475569;
+  color: #94a3b8;
+}
+
+.todo-form.dark-mode .char-count.char-limit {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .todo-form {
@@ -192,7 +448,11 @@ const handleCompositionEnd = () => {
   
   .todo-input {
     padding: 0.875rem 1rem;
-    font-size: 0.9rem;
+    font-size: 1rem;
+  }
+  
+  .search-input {
+    font-size: 1rem;
   }
   
   .add-button {
@@ -215,6 +475,17 @@ const handleCompositionEnd = () => {
 }
 
 /* 动画效果 */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes pulse {
   0%, 100% {
     opacity: 1;

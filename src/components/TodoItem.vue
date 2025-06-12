@@ -1,21 +1,30 @@
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, inject } from 'vue'
 
 // 定义 props
 const props = defineProps({
   todo: {
     type: Object,
     required: true
+  },
+  index: {
+    type: Number,
+    required: true
   }
 })
 
 // 定义事件
-const emit = defineEmits(['toggle', 'delete', 'edit'])
+const emit = defineEmits(['toggle', 'delete', 'edit', 'drag-start', 'drag-over', 'drop'])
 
 // 响应式数据
 const isEditing = ref(false)
 const editText = ref('')
 const editInput = ref(null)
+const isDragging = ref(false)
+const isDragOver = ref(false)
+
+// 注入暗黑模式状态
+const isDarkMode = inject('isDarkMode', ref(false))
 
 // 方法
 const handleToggle = () => {
@@ -54,6 +63,32 @@ const handleKeydown = (event) => {
   }
 }
 
+// 拖拽相关方法
+const handleDragStart = (event) => {
+  isDragging.value = true
+  emit('drag-start', event, props.index)
+}
+
+const handleDragEnd = () => {
+  isDragging.value = false
+  isDragOver.value = false
+}
+
+const handleDragOver = (event) => {
+  event.preventDefault()
+  isDragOver.value = true
+  emit('drag-over', event)
+}
+
+const handleDragLeave = () => {
+  isDragOver.value = false
+}
+
+const handleDrop = (event) => {
+  isDragOver.value = false
+  emit('drop', event, props.index)
+}
+
 // 格式化创建时间
 const formatDate = (dateString) => {
   const date = new Date(dateString)
@@ -80,8 +115,17 @@ const formatDate = (dateString) => {
     class="todo-item" 
     :class="{ 
       'completed': todo.completed,
-      'editing': isEditing 
+      'editing': isEditing,
+      'dragging': isDragging,
+      'drag-over': isDragOver,
+      'dark-mode': isDarkMode
     }"
+    draggable="true"
+    @dragstart="handleDragStart"
+    @dragend="handleDragEnd"
+    @dragover="handleDragOver"
+    @dragleave="handleDragLeave"
+    @drop="handleDrop"
   >
     <div class="todo-content">
       <!-- 复选框 -->
@@ -208,6 +252,26 @@ const formatDate = (dateString) => {
   border-left: 4px solid #f59e0b;
 }
 
+/* 暗黑模式样式 */
+.todo-item.dark-mode {
+  border-bottom: 1px solid #334155;
+  background: #1e293b;
+  color: #f1f5f9;
+}
+
+.todo-item.dark-mode:hover {
+  background: #334155;
+}
+
+.todo-item.dark-mode.completed {
+  background: #0f172a;
+}
+
+.todo-item.dark-mode.editing {
+  background: #1e1b4b;
+  border-left: 4px solid #6366f1;
+}
+
 .todo-content {
   display: flex;
   align-items: flex-start;
@@ -241,6 +305,21 @@ const formatDate = (dateString) => {
   color: white;
 }
 
+/* 暗黑模式复选框 */
+.todo-item.dark-mode .checkbox {
+  border: 2px solid #64748b;
+  background: #334155;
+}
+
+.todo-item.dark-mode .checkbox:hover {
+  border-color: #6366f1;
+}
+
+.todo-item.dark-mode .checkbox.checked {
+  background: #6366f1;
+  border-color: #6366f1;
+}
+
 .check-icon {
   width: 14px;
   height: 14px;
@@ -271,6 +350,19 @@ const formatDate = (dateString) => {
   color: #9ca3af;
 }
 
+/* 暗黑模式文本 */
+.todo-item.dark-mode .todo-text {
+  color: #f1f5f9;
+}
+
+.todo-item.dark-mode .todo-text:hover {
+  color: #6366f1;
+}
+
+.todo-item.dark-mode .todo-text.completed-text {
+  color: #64748b;
+}
+
 .edit-input {
   width: 100%;
   padding: 0.5rem 0.75rem;
@@ -281,6 +373,14 @@ const formatDate = (dateString) => {
   background: white;
   outline: none;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* 暗黑模式输入框 */
+.todo-item.dark-mode .edit-input {
+  border: 2px solid #6366f1;
+  background: #334155;
+  color: #f1f5f9;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 .todo-meta {
@@ -305,6 +405,16 @@ const formatDate = (dateString) => {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.025em;
+}
+
+/* 暗黑模式元数据 */
+.todo-item.dark-mode .created-time {
+  color: #64748b;
+}
+
+.todo-item.dark-mode .completed-badge {
+  color: #10b981;
+  background: #064e3b;
 }
 
 .todo-actions {
@@ -370,6 +480,42 @@ const formatDate = (dateString) => {
   color: #dc2626;
 }
 
+/* 暗黑模式按钮 */
+.todo-item.dark-mode .action-button {
+  background: #475569;
+  color: #94a3b8;
+}
+
+.todo-item.dark-mode .edit-button:hover {
+  background: #1e40af;
+  color: #93c5fd;
+}
+
+.todo-item.dark-mode .save-button {
+  background: #065f46;
+  color: #6ee7b7;
+}
+
+.todo-item.dark-mode .save-button:hover {
+  background: #047857;
+  color: #34d399;
+}
+
+.todo-item.dark-mode .cancel-button {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+.todo-item.dark-mode .cancel-button:hover {
+  background: #991b1b;
+  color: #f87171;
+}
+
+.todo-item.dark-mode .delete-button:hover {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
 .action-icon {
   width: 16px;
   height: 16px;
@@ -427,6 +573,38 @@ const formatDate = (dateString) => {
     font-size: 0.65rem;
     padding: 0.1rem 0.4rem;
   }
+}
+
+/* 拖拽样式 */
+.todo-item.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg) scale(1.05);
+  z-index: 1000;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.todo-item.drag-over {
+  border-top: 3px solid #4f46e5;
+  background: #f0f9ff;
+  transform: translateY(-2px);
+}
+
+/* 暗黑模式拖拽样式 */
+.todo-item.dark-mode.dragging {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.todo-item.dark-mode.drag-over {
+  border-top: 3px solid #6366f1;
+  background: #1e1b4b;
+}
+
+.todo-item {
+  cursor: grab;
+}
+
+.todo-item:active {
+  cursor: grabbing;
 }
 
 /* 动画效果 */

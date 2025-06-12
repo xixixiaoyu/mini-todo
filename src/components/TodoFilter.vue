@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, inject, ref } from 'vue'
 
 // 定义 props
 const props = defineProps({
@@ -24,6 +24,9 @@ const emit = defineEmits(['update:modelValue', 'toggle-all', 'clear-completed'])
 const totalCount = computed(() => props.activeCount + props.completedCount)
 const allCompleted = computed(() => totalCount.value > 0 && props.activeCount === 0)
 
+// 注入暗黑模式状态
+const isDarkMode = inject('isDarkMode', ref(false))
+
 // 过滤选项
 const filterOptions = [
   { value: 'all', label: '全部', icon: '📋' },
@@ -46,7 +49,7 @@ const handleClearCompleted = () => {
 </script>
 
 <template>
-  <div class="todo-filter">
+  <div class="todo-filter" :class="{ 'dark-mode': isDarkMode }">
     <!-- 批量操作区域 -->
     <div class="bulk-actions">
       <button 
@@ -317,5 +320,70 @@ const handleClearCompleted = () => {
 
 .filter-count {
   animation: fadeIn 0.2s ease;
+}
+
+/* 暗黑模式样式 */
+.todo-filter.dark-mode {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.todo-filter.dark-mode .toggle-all-button {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.todo-filter.dark-mode .toggle-all-button:hover {
+  background: #475569;
+  border-color: #64748b;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.todo-filter.dark-mode .toggle-all-button.all-completed {
+  background: #166534;
+  border-color: #16a34a;
+  color: #bbf7d0;
+}
+
+.todo-filter.dark-mode .clear-completed-button {
+  color: #f87171;
+}
+
+.todo-filter.dark-mode .clear-completed-button:hover {
+  background: #450a0a;
+  border-color: #dc2626;
+}
+
+.todo-filter.dark-mode .filter-tabs {
+  background: #334155;
+}
+
+.todo-filter.dark-mode .filter-tab {
+  color: #94a3b8;
+}
+
+.todo-filter.dark-mode .filter-tab:hover {
+  background: rgba(71, 85, 105, 0.5);
+  color: #e2e8f0;
+}
+
+.todo-filter.dark-mode .filter-tab.active {
+  background: #475569;
+  color: #a78bfa;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.todo-filter.dark-mode .filter-count {
+  background: #6366f1;
+  color: white;
+}
+
+.todo-filter.dark-mode .filter-tab.active .filter-count {
+  background: #6366f1;
+}
+
+.todo-filter.dark-mode .filter-tab:not(.active) .filter-count {
+  background: #64748b;
 }
 </style>
