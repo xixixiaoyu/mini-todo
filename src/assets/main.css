@@ -15,6 +15,13 @@ body {
   background-color: #f8fafc;
   color: #1f2937;
   line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 暗黑模式全局样式 */
+html.dark body {
+  background-color: #0f172a;
+  color: #f1f5f9;
 }
 
 #app {
@@ -30,15 +37,30 @@ body {
 
 ::-webkit-scrollbar-track {
   background: #f1f5f9;
+  transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
+  transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* 暗黑模式滚动条样式 */
+html.dark ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
 
 /* 选择文本样式 */
@@ -47,11 +69,23 @@ body {
   color: #1f2937;
 }
 
+html.dark ::selection {
+  background-color: rgba(99, 102, 241, 0.3);
+  color: #f1f5f9;
+}
+
 /* 焦点样式 */
 button:focus,
 input:focus,
 textarea:focus {
   outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+html.dark button:focus,
+html.dark input:focus,
+html.dark textarea:focus {
+  outline: 2px solid #6366f1;
   outline-offset: 2px;
 }
 

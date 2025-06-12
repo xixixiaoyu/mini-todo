@@ -548,6 +548,11 @@ provide('isDarkMode', isDarkMode)
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.8rem;
   flex-shrink: 0;
+  transition: color 0.3s ease;
+}
+
+.app.dark-mode .footer {
+  color: rgba(148, 163, 184, 0.8);
 }
 
 /* 过渡动画 */
