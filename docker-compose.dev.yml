@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # 前端开发服务
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+      - /app/apps/frontend/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:3000
+    networks:
+      - todolist-dev-network
+    command: pnpm --filter=frontend dev --host 0.0.0.0
+
+  # 后端开发服务
+  backend-dev:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile.dev
+    ports:
+      - "3000:3000"
+      - "9229:9229"  # 调试端口
+    volumes:
+      - ./apps/backend:/app/apps/backend
+      - /app/apps/backend/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DATABASE_URL=postgresql://todolist_user:todolist_password@database-dev:5432/todolist
+      - REDIS_URL=redis://redis-dev:6379
+    depends_on:
+      - database-dev
+      - redis-dev
+    networks:
+      - todolist-dev-network
+    command: pnpm --filter=backend start:debug
+
+  # 开发数据库
+  database-dev:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: todolist
+      POSTGRES_USER: todolist_user
+      POSTGRES_PASSWORD: todolist_password
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5433:5432"
+    networks:
+      - todolist-dev-network
+
+  # 开发 Redis
+  redis-dev:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - todolist-dev-network
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+
+networks:
+  todolist-dev-network:
+    driver: bridge

@@ -159,6 +159,47 @@ todolist-monorepo/
 - **统一发布**: 简化发布流程
 - **依赖追踪**: 更好地追踪跨应用的依赖关系
 
+## Docker 和 CI/CD
+
+### Docker 支持
+
+项目已完全容器化，支持开发和生产环境：
+
+```bash
+# 开发环境（支持热重载）
+make dev
+
+# 生产环境
+make build
+make up
+
+# 查看服务状态
+make status
+
+# 查看日志
+make logs
+```
+
+### CI/CD 流程
+
+- **自动化测试**: 代码推送时自动运行测试
+- **安全扫描**: 使用 Trivy 进行漏洞扫描
+- **镜像构建**: 自动构建和推送 Docker 镜像
+- **自动部署**: main 分支自动部署到生产环境
+- **健康检查**: 部署后自动验证服务状态
+
+详细配置请参考 [部署指南](./DEPLOYMENT.md)
+
+### 环境配置
+
+```bash
+# 复制环境变量模板
+cp .env.example .env
+
+# 编辑配置
+vim .env
+```
+
 ## 🚀 扩展建议
 
 ### 添加共享包
@@ -178,6 +219,9 @@ mkdir -p packages/types
 - **Commitlint**: 提交信息规范
 - **Changesets**: 版本管理和发布
 - **Turborepo**: 更高效的构建缓存
+- **Kubernetes**: 大规模部署时考虑使用 K8s
+- **监控系统**: 集成 Prometheus + Grafana
+- **服务网格**: 使用 Istio 管理微服务通信
 
 ## 🌟 特色亮点
 
