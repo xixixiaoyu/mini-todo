@@ -1,151 +1,183 @@
-# 📝 Vue TodoList 应用
+# 📝 TodoList Monorepo
 
-一个使用 Vue 3 和 Composition API 构建的现代化待办事项应用，具有优雅的界面设计和丰富的功能。
+这是一个使用 Vue.js + NestJS 构建的全栈 TodoList 应用，采用 monorepo 架构管理前后端代码。
 
-## ✨ 功能特性
+## 🏗️ 项目结构
 
-### 🎯 核心功能
-- **添加任务**: 快速添加新的待办事项
-- **完成任务**: 点击复选框标记任务完成状态
-- **编辑任务**: 双击任务文本或点击编辑按钮进行修改
-- **删除任务**: 删除不需要的任务
-- **任务过滤**: 按状态筛选任务（全部/待完成/已完成）
-- **批量操作**: 一键标记所有任务完成/未完成，清除已完成任务
-- **数据持久化**: 使用 localStorage 自动保存数据
-
-### 🎨 界面特性
-- **现代化设计**: 采用渐变背景和卡片式布局
-- **响应式布局**: 完美适配桌面端和移动端
-- **流畅动画**: 丰富的过渡动画和交互效果
-- **直观统计**: 实时显示任务完成情况统计
-- **优雅交互**: 悬停效果、焦点状态等细节优化
-
-### 📱 用户体验
-- **键盘快捷键**: Enter 键快速添加，Escape 键取消编辑
-- **智能提示**: 字符计数、输入提示等贴心功能
-- **空状态处理**: 友好的空状态提示信息
-- **时间显示**: 显示任务创建时间（相对时间）
-- **无障碍支持**: 完善的 ARIA 标签和键盘导航
-
-## 🛠️ 技术栈
-
-- **Vue 3**: 最新的 Vue.js 框架
-- **Composition API**: 使用 `<script setup>` 语法
-- **Vite**: 快速的构建工具
-- **CSS3**: 现代 CSS 特性（Grid、Flexbox、动画等）
-- **ES6+**: 现代 JavaScript 语法
-- **响应式设计**: 移动优先的设计理念
+```
+todolist-monorepo/
+├── apps/
+│   ├── frontend/          # Vue.js 前端应用
+│   │   ├── src/
+│   │   ├── public/
+│   │   ├── index.html
+│   │   ├── vite.config.js
+│   │   └── package.json
+│   └── backend/           # NestJS 后端应用
+│       ├── src/
+│       ├── test/
+│       └── package.json
+├── packages/              # 共享包（未来扩展）
+├── pnpm-workspace.yaml    # pnpm workspace 配置
+├── package.json           # 根目录配置
+└── README.md
+```
 
 ## 🚀 快速开始
 
 ### 环境要求
-- Node.js 16.0 或更高版本
-- npm 或 yarn 包管理器
+- Node.js 18.0 或更高版本
+- pnpm 8.0 或更高版本（推荐使用 pnpm 作为包管理器）
 
 ### 安装和运行
 
 1. **克隆项目**
    ```bash
    git clone <repository-url>
-   cd todolist
+   cd todolist-monorepo
    ```
 
-2. **安装依赖**
+2. **安装 pnpm（如果尚未安装）**
    ```bash
-   npm install
+   npm install -g pnpm
    ```
 
-3. **启动开发服务器**
+3. **安装所有依赖**
    ```bash
-   npm run dev
+   pnpm install
    ```
 
-4. **打开浏览器**
-   访问 `http://localhost:5173` 查看应用
+4. **启动开发环境**
+   ```bash
+   # 同时启动前后端开发服务器
+   pnpm dev
+   
+   # 或者分别启动
+   pnpm frontend:dev    # 启动前端开发服务器
+   pnpm backend:dev     # 启动后端开发服务器
+   ```
 
-### 构建生产版本
+5. **构建生产版本**
+   ```bash
+   pnpm build           # 构建所有应用
+   pnpm frontend:build  # 仅构建前端
+   pnpm backend:build   # 仅构建后端
+   ```
 
-```bash
-# 构建生产版本
-npm run build
+6. **运行生产版本**
+   ```bash
+   pnpm start           # 启动所有应用
+   pnpm backend:start   # 仅启动后端生产服务器
+   ```
 
-# 预览生产版本
-npm run preview
+## 🛠️ 技术栈
+
+### 前端 (Frontend)
+- **Vue 3**: 最新的 Vue.js 框架
+- **Composition API**: 使用 `<script setup>` 语法
+- **Vite**: 快速的构建工具
+- **CSS3**: 现代 CSS 特性
+
+### 后端 (Backend)
+- **NestJS**: 企业级 Node.js 框架
+- **TypeScript**: 类型安全的 JavaScript
+- **Express**: 底层 HTTP 服务器
+
+### 开发工具
+- **pnpm**: 高效的包管理器
+- **ESLint**: 代码质量检查
+- **Prettier**: 代码格式化
+- **TypeScript**: 类型检查
+
+## 📁 详细项目结构
+
 ```
-
-## 📁 项目结构
-
-```
-src/
-├── components/          # Vue 组件
-│   ├── TodoForm.vue    # 添加任务表单组件
-│   ├── TodoItem.vue    # 单个任务项组件
-│   └── TodoFilter.vue  # 过滤器和批量操作组件
-├── assets/             # 静态资源
-│   ├── main.css       # 全局样式
-│   └── base.css       # 基础样式
-├── App.vue            # 根组件
-└── main.js           # 应用入口
+todolist-monorepo/
+├── apps/
+│   ├── frontend/                # Vue.js 前端应用
+│   │   ├── src/
+│   │   │   ├── components/      # Vue 组件
+│   │   │   │   ├── TodoForm.vue
+│   │   │   │   ├── TodoItem.vue
+│   │   │   │   ├── TodoFilter.vue
+│   │   │   │   └── icons/       # 图标组件
+│   │   │   ├── assets/          # 静态资源
+│   │   │   ├── App.vue          # 根组件
+│   │   │   └── main.js          # 应用入口
+│   │   ├── public/              # 公共资源
+│   │   ├── index.html           # HTML 模板
+│   │   ├── vite.config.js       # Vite 配置
+│   │   ├── jsconfig.json        # JS 项目配置
+│   │   └── package.json         # 前端依赖
+│   └── backend/                 # NestJS 后端应用
+│       ├── src/
+│       │   ├── app.controller.ts
+│       │   ├── app.service.ts
+│       │   ├── app.module.ts
+│       │   └── main.ts          # 应用入口
+│       ├── test/                # 测试文件
+│       ├── nest-cli.json        # NestJS CLI 配置
+│       ├── tsconfig.json        # TypeScript 配置
+│       └── package.json         # 后端依赖
+├── packages/                    # 共享包（未来扩展）
+├── pnpm-workspace.yaml          # pnpm workspace 配置
+├── package.json                 # 根目录配置
+├── .gitignore                   # Git 忽略文件
+└── README.md                    # 项目说明
 ```
 
 ## 🎮 使用指南
 
-### 添加任务
-1. 在顶部输入框中输入任务内容
-2. 按 Enter 键或点击 ➕ 按钮添加
-3. 支持最多 200 个字符，实时显示字符计数
+### 开发模式
+- **前端开发**: `pnpm frontend:dev` - 启动 Vite 开发服务器 (http://localhost:5173)
+- **后端开发**: `pnpm backend:dev` - 启动 NestJS 开发服务器 (http://localhost:3000)
+- **同时开发**: `pnpm dev` - 并行启动前后端开发服务器
 
-### 管理任务
-- **完成任务**: 点击任务前的圆形复选框
-- **编辑任务**: 双击任务文本或点击编辑图标
-- **删除任务**: 点击删除图标（垃圾桶）
-- **批量操作**: 使用过滤器区域的批量操作按钮
+### 生产部署
+- **构建应用**: `pnpm build` - 构建前后端生产版本
+- **启动服务**: `pnpm start` - 启动生产环境服务
 
-### 过滤任务
-- **全部**: 显示所有任务
-- **待完成**: 只显示未完成的任务
-- **已完成**: 只显示已完成的任务
+### 代码质量
+- **代码检查**: `pnpm lint` - 运行 ESLint 检查所有应用
+- **代码格式化**: `pnpm format` - 使用 Prettier 格式化代码
+- **运行测试**: `pnpm test` - 运行所有测试
 
-### 键盘快捷键
-- `Enter`: 添加新任务或保存编辑
-- `Escape`: 取消编辑
-- `Tab`: 在界面元素间导航
+## 🔧 Monorepo 优势
 
-## 🎨 设计理念
+### 代码共享
+- **共享组件**: 在 `packages/` 目录下创建可复用的组件库
+- **共享工具**: 统一的工具函数和类型定义
+- **统一配置**: 共享 ESLint、Prettier、TypeScript 配置
 
-### 视觉设计
-- **色彩方案**: 使用紫色渐变主题，营造现代感
-- **排版**: 清晰的层次结构和适当的留白
-- **图标**: 使用 SVG 图标，确保清晰度和可缩放性
-- **动画**: 微妙的过渡效果，提升用户体验
+### 开发效率
+- **统一依赖管理**: 使用 pnpm workspace 管理所有依赖
+- **原子化提交**: 前后端代码变更可以在同一个提交中
+- **统一构建**: 一键构建和部署整个应用
 
-### 交互设计
-- **即时反馈**: 所有操作都有即时的视觉反馈
-- **容错性**: 防止误操作，提供撤销机制
-- **一致性**: 统一的交互模式和视觉语言
-- **可访问性**: 支持键盘导航和屏幕阅读器
+### 版本控制
+- **同步版本**: 前后端版本保持同步
+- **统一发布**: 简化发布流程
+- **依赖追踪**: 更好地追踪跨应用的依赖关系
 
-## 🔧 自定义配置
+## 🚀 扩展建议
 
-### 修改主题色彩
-在 `src/assets/main.css` 中修改 CSS 变量：
+### 添加共享包
+```bash
+# 创建共享 UI 组件库
+mkdir -p packages/ui
 
-```css
-:root {
-  --primary-color: #4f46e5;    /* 主色调 */
-  --success-color: #16a34a;    /* 成功色 */
-  --danger-color: #dc2626;     /* 危险色 */
-  --background: #f8fafc;       /* 背景色 */
-}
+# 创建共享工具库
+mkdir -p packages/utils
+
+# 创建共享类型定义
+mkdir -p packages/types
 ```
 
-### 修改存储键名
-在 `src/App.vue` 中修改 localStorage 键名：
-
-```javascript
-const STORAGE_KEY = 'my-custom-todos'
-const STORAGE_ID_KEY = 'my-custom-todos-id'
-```
+### 集成更多工具
+- **Husky**: Git hooks 管理
+- **Commitlint**: 提交信息规范
+- **Changesets**: 版本管理和发布
+- **Turborepo**: 更高效的构建缓存
 
 ## 🌟 特色亮点
 

@@ -1,19 +1,29 @@
 {
-  "name": "todolist",
-  "version": "0.0.0",
+  "name": "todolist-monorepo",
+  "version": "1.0.0",
   "private": true,
-  "type": "module",
+  "description": "TodoList Monorepo - Vue.js frontend and NestJS backend",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "vue": "^3.5.13"
+    "dev": "pnpm --parallel --filter=./apps/* dev",
+    "build": "pnpm --recursive --filter=./apps/* build",
+    "start": "pnpm --parallel --filter=./apps/* start",
+    "test": "pnpm --recursive test",
+    "lint": "pnpm --recursive lint",
+    "format": "pnpm --recursive format",
+    "clean": "pnpm --recursive clean",
+    "frontend:dev": "pnpm --filter=frontend dev",
+    "frontend:build": "pnpm --filter=frontend build",
+    "backend:dev": "pnpm --filter=backend start:dev",
+    "backend:build": "pnpm --filter=backend build",
+    "backend:start": "pnpm --filter=backend start:prod"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.3",
-    "vite": "^6.2.4",
-    "vite-plugin-vue-devtools": "^7.7.2"
-  }
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
 }
