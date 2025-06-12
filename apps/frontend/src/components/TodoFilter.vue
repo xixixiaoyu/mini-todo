@@ -5,16 +5,16 @@ import { computed, inject, ref } from 'vue'
 const props = defineProps({
   modelValue: {
     type: String,
-    default: 'all'
+    default: 'all',
   },
   activeCount: {
     type: Number,
-    default: 0
+    default: 0,
   },
   completedCount: {
     type: Number,
-    default: 0
-  }
+    default: 0,
+  },
 })
 
 // 定义事件
@@ -31,11 +31,11 @@ const isDarkMode = inject('isDarkMode', ref(false))
 const filterOptions = [
   { value: 'all', label: '全部', icon: '📋' },
   { value: 'active', label: '待完成', icon: '⏳' },
-  { value: 'completed', label: '已完成', icon: '✅' }
+  { value: 'completed', label: '已完成', icon: '✅' },
 ]
 
 // 方法
-const setFilter = (filter) => {
+const setFilter = filter => {
   emit('update:modelValue', filter)
 }
 
@@ -52,30 +52,32 @@ const handleClearCompleted = () => {
   <div class="todo-filter" :class="{ 'dark-mode': isDarkMode }">
     <!-- 批量操作区域 -->
     <div class="bulk-actions">
-      <button 
+      <button
         class="toggle-all-button"
         :class="{ 'all-completed': allCompleted }"
-        @click="handleToggleAll"
         :title="allCompleted ? '标记全部为未完成' : '标记全部为已完成'"
+        @click="handleToggleAll"
       >
         <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <polyline v-if="allCompleted" points="20,6 9,17 4,12"></polyline>
-          <circle v-else cx="12" cy="12" r="10"></circle>
+          <polyline v-if="allCompleted" points="20,6 9,17 4,12" />
+          <circle v-else cx="12" cy="12" r="10" />
         </svg>
         <span class="toggle-text">
           {{ allCompleted ? '全部已完成' : '全部标记完成' }}
         </span>
       </button>
-      
-      <button 
+
+      <button
         v-if="completedCount > 0"
         class="clear-completed-button"
-        @click="handleClearCompleted"
         title="清除已完成的任务"
+        @click="handleClearCompleted"
       >
         <svg class="clear-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <polyline points="3,6 5,6 21,6"></polyline>
-          <path d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2"></path>
+          <polyline points="3,6 5,6 21,6" />
+          <path
+            d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2"
+          />
         </svg>
         <span class="clear-text">清除已完成 ({{ completedCount }})</span>
       </button>
@@ -87,27 +89,21 @@ const handleClearCompleted = () => {
         v-for="option in filterOptions"
         :key="option.value"
         class="filter-tab"
-        :class="{ 'active': modelValue === option.value }"
+        :class="{ active: modelValue === option.value }"
         @click="setFilter(option.value)"
       >
         <span class="filter-icon">{{ option.icon }}</span>
         <span class="filter-label">{{ option.label }}</span>
-        <span 
-          v-if="option.value === 'active' && activeCount > 0"
-          class="filter-count"
-        >
+        <span v-if="option.value === 'active' && activeCount > 0" class="filter-count">
           {{ activeCount }}
         </span>
-        <span 
+        <span
           v-if="option.value === 'completed' && completedCount > 0"
           class="filter-count"
         >
           {{ completedCount }}
         </span>
-        <span 
-          v-if="option.value === 'all' && totalCount > 0"
-          class="filter-count"
-        >
+        <span v-if="option.value === 'all' && totalCount > 0" class="filter-count">
           {{ totalCount }}
         </span>
       </button>
@@ -245,38 +241,38 @@ const handleClearCompleted = () => {
   .todo-filter {
     padding: 1rem;
   }
-  
+
   .bulk-actions {
     gap: 0.75rem;
     margin-bottom: 1rem;
   }
-  
+
   .toggle-all-button,
   .clear-completed-button {
     padding: 0.625rem 0.875rem;
     font-size: 0.8rem;
   }
-  
+
   .toggle-text,
   .clear-text {
     display: none;
   }
-  
+
   .filter-tabs {
     gap: 0.25rem;
   }
-  
+
   .filter-tab {
     padding: 0.625rem 0.5rem;
     font-size: 0.8rem;
     flex-direction: column;
     gap: 0.25rem;
   }
-  
+
   .filter-label {
     font-size: 0.75rem;
   }
-  
+
   .filter-count {
     font-size: 0.7rem;
     padding: 0.1rem 0.4rem;
@@ -289,13 +285,13 @@ const handleClearCompleted = () => {
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .toggle-all-button,
   .clear-completed-button {
     width: 100%;
     justify-content: center;
   }
-  
+
   .toggle-text,
   .clear-text {
     display: inline;

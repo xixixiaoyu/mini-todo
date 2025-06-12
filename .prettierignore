@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+.next/
+coverage/
+
+# Docker
+Dockerfile*
+.dockerignore
+
+# Git
+.git/
+.gitignore
+
+# Environment
+.env*
+
+# Logs
+*.log
+logs/
+
+# Database
+*.sql
+
+# Documentation
+*.md
+
+# Config files
+*.config.js
+*.config.mjs
+*.config.ts
+vite.config.js
+nest-cli.json
+tsconfig*.json
+jsconfig.json
+
+# CI/CD
+.github/
+Makefile
+
+# Other
+public/
+static/
+assets/

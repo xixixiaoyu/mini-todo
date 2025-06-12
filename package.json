@@ -8,8 +8,10 @@
     "build": "pnpm --recursive --filter=./apps/* build",
     "start": "pnpm --parallel --filter=./apps/* start",
     "test": "pnpm --recursive test",
-    "lint": "pnpm --recursive lint",
-    "format": "pnpm --recursive format",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "clean": "pnpm --recursive clean",
     "frontend:dev": "pnpm --filter=frontend dev",
     "frontend:build": "pnpm --filter=frontend build",
@@ -29,7 +31,14 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-vue": "^9.17.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.0",
+    "typescript-eslint": "^8.20.0",
+    "globals": "^14.0.0"
   },
   "engines": {
     "node": ">=20.0.0",

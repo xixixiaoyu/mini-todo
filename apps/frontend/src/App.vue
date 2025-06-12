@@ -18,30 +18,30 @@ const filteredTodos = computed(() => {
   // 根据搜索查询过滤
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase().trim()
-    filtered = filtered.filter((todo) => todo.text.toLowerCase().includes(query))
+    filtered = filtered.filter(todo => todo.text.toLowerCase().includes(query))
   }
 
   // 根据状态过滤
   switch (filter.value) {
     case 'active':
-      return filtered.filter((todo) => !todo.completed)
+      return filtered.filter(todo => !todo.completed)
     case 'completed':
-      return filtered.filter((todo) => todo.completed)
+      return filtered.filter(todo => todo.completed)
     default:
       return filtered
   }
 })
 
 const activeTodosCount = computed(() => {
-  return todos.value.filter((todo) => !todo.completed).length
+  return todos.value.filter(todo => !todo.completed).length
 })
 
 const completedTodosCount = computed(() => {
-  return todos.value.filter((todo) => todo.completed).length
+  return todos.value.filter(todo => todo.completed).length
 })
 
 // 方法
-const addTodo = (text) => {
+const addTodo = text => {
   if (text.trim()) {
     todos.value.push({
       id: nextId.value++,
@@ -53,16 +53,16 @@ const addTodo = (text) => {
   }
 }
 
-const toggleTodo = (id) => {
-  const todo = todos.value.find((t) => t.id === id)
+const toggleTodo = id => {
+  const todo = todos.value.find(t => t.id === id)
   if (todo) {
     todo.completed = !todo.completed
     saveTodos()
   }
 }
 
-const deleteTodo = (id) => {
-  const index = todos.value.findIndex((t) => t.id === id)
+const deleteTodo = id => {
+  const index = todos.value.findIndex(t => t.id === id)
   if (index > -1) {
     todos.value.splice(index, 1)
     saveTodos()
@@ -70,7 +70,7 @@ const deleteTodo = (id) => {
 }
 
 const editTodo = (id, newText) => {
-  const todo = todos.value.find((t) => t.id === id)
+  const todo = todos.value.find(t => t.id === id)
   if (todo && newText.trim()) {
     todo.text = newText.trim()
     saveTodos()
@@ -78,13 +78,13 @@ const editTodo = (id, newText) => {
 }
 
 const clearCompleted = () => {
-  todos.value = todos.value.filter((todo) => !todo.completed)
+  todos.value = todos.value.filter(todo => !todo.completed)
   saveTodos()
 }
 
 const toggleAll = () => {
-  const allCompleted = todos.value.every((todo) => todo.completed)
-  todos.value.forEach((todo) => {
+  const allCompleted = todos.value.every(todo => todo.completed)
+  todos.value.forEach(todo => {
     todo.completed = !allCompleted
   })
   saveTodos()
@@ -96,7 +96,7 @@ const handleDragStart = (event, index) => {
   event.dataTransfer.effectAllowed = 'move'
 }
 
-const handleDragOver = (event) => {
+const handleDragOver = event => {
   event.preventDefault()
   event.dataTransfer.dropEffect = 'move'
 }
@@ -107,9 +107,9 @@ const handleDrop = (event, dropIndex) => {
 
   if (dragIndex !== dropIndex) {
     const draggedTodo = filteredTodos.value[dragIndex]
-    const originalDragIndex = todos.value.findIndex((todo) => todo.id === draggedTodo.id)
+    const originalDragIndex = todos.value.findIndex(todo => todo.id === draggedTodo.id)
     const dropTodo = filteredTodos.value[dropIndex]
-    const originalDropIndex = todos.value.findIndex((todo) => todo.id === dropTodo.id)
+    const originalDropIndex = todos.value.findIndex(todo => todo.id === dropTodo.id)
 
     // 重新排序
     const [removed] = todos.value.splice(originalDragIndex, 1)
@@ -134,7 +134,7 @@ const updateTheme = () => {
 }
 
 // 搜索功能
-const updateSearch = (query) => {
+const updateSearch = query => {
   searchQuery.value = query
 }
 
@@ -186,9 +186,9 @@ provide('isDarkMode', isDarkMode)
         </div>
         <button
           class="theme-toggle"
-          @click="toggleTheme"
           :title="isDarkMode ? '切换到浅色主题' : '切换到深色主题'"
           aria-label="主题切换"
+          @click="toggleTheme"
         >
           <svg
             v-if="isDarkMode"
@@ -197,18 +197,24 @@ provide('isDarkMode', isDarkMode)
             fill="none"
             stroke="currentColor"
           >
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
           </svg>
-          <svg v-else class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="m21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          <svg
+            v-else
+            class="theme-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path d="m21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
         </button>
       </div>
@@ -218,10 +224,10 @@ provide('isDarkMode', isDarkMode)
       <div class="todo-container">
         <!-- 添加新任务和搜索 -->
         <TodoForm
+          :search-query="searchQuery"
           @add-todo="addTodo"
           @update-search="updateSearch"
           @clear-search="clearSearch"
-          :search-query="searchQuery"
         />
 
         <!-- 任务统计 -->
@@ -258,13 +264,13 @@ provide('isDarkMode', isDarkMode)
               :key="todo.id"
               :todo="todo"
               :index="index"
+              draggable="true"
               @toggle="toggleTodo"
               @delete="deleteTodo"
               @edit="editTodo"
               @drag-start="handleDragStart"
               @drag-over="handleDragOver"
               @drop="handleDrop"
-              draggable="true"
             />
           </TransitionGroup>
 
@@ -278,10 +284,10 @@ provide('isDarkMode', isDarkMode)
                 searchQuery
                   ? '没有找到匹配的任务'
                   : filter === 'active'
-                  ? '没有待完成的任务'
-                  : filter === 'completed'
-                  ? '没有已完成的任务'
-                  : '还没有任务，添加一个开始吧！'
+                    ? '没有待完成的任务'
+                    : filter === 'completed'
+                      ? '没有已完成的任务'
+                      : '还没有任务，添加一个开始吧！'
               }}
             </h3>
             <p class="empty-description">
@@ -289,8 +295,8 @@ provide('isDarkMode', isDarkMode)
                 searchQuery
                   ? '尝试使用不同的关键词搜索，或清除搜索条件查看所有任务'
                   : filter === 'all'
-                  ? '点击上方输入框添加你的第一个任务'
-                  : '切换到其他标签查看任务'
+                    ? '点击上方输入框添加你的第一个任务'
+                    : '切换到其他标签查看任务'
               }}
             </p>
             <button v-if="searchQuery" class="clear-search-btn" @click="clearSearch">

@@ -5,12 +5,12 @@ import { ref, nextTick, inject } from 'vue'
 const props = defineProps({
   todo: {
     type: Object,
-    required: true
+    required: true,
   },
   index: {
     type: Number,
-    required: true
-  }
+    required: true,
+  },
 })
 
 // 定义事件
@@ -55,7 +55,7 @@ const cancelEdit = () => {
   editText.value = ''
 }
 
-const handleKeydown = (event) => {
+const handleKeydown = event => {
   if (event.key === 'Enter') {
     saveEdit()
   } else if (event.key === 'Escape') {
@@ -64,7 +64,7 @@ const handleKeydown = (event) => {
 }
 
 // 拖拽相关方法
-const handleDragStart = (event) => {
+const handleDragStart = event => {
   isDragging.value = true
   emit('drag-start', event, props.index)
 }
@@ -74,7 +74,7 @@ const handleDragEnd = () => {
   isDragOver.value = false
 }
 
-const handleDragOver = (event) => {
+const handleDragOver = event => {
   event.preventDefault()
   isDragOver.value = true
   emit('drag-over', event)
@@ -84,13 +84,13 @@ const handleDragLeave = () => {
   isDragOver.value = false
 }
 
-const handleDrop = (event) => {
+const handleDrop = event => {
   isDragOver.value = false
   emit('drop', event, props.index)
 }
 
 // 格式化创建时间
-const formatDate = (dateString) => {
+const formatDate = dateString => {
   const date = new Date(dateString)
   const now = new Date()
   const diffMs = now - date
@@ -102,23 +102,23 @@ const formatDate = (dateString) => {
   if (diffMins < 60) return `${diffMins}分钟前`
   if (diffHours < 24) return `${diffHours}小时前`
   if (diffDays < 7) return `${diffDays}天前`
-  
+
   return date.toLocaleDateString('zh-CN', {
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
   })
 }
 </script>
 
 <template>
-  <div 
-    class="todo-item" 
-    :class="{ 
-      'completed': todo.completed,
-      'editing': isEditing,
-      'dragging': isDragging,
+  <div
+    class="todo-item"
+    :class="{
+      completed: todo.completed,
+      editing: isEditing,
+      dragging: isDragging,
       'drag-over': isDragOver,
-      'dark-mode': isDarkMode
+      'dark-mode': isDarkMode,
     }"
     draggable="true"
     @dragstart="handleDragStart"
@@ -129,35 +129,35 @@ const formatDate = (dateString) => {
   >
     <div class="todo-content">
       <!-- 复选框 -->
-      <button 
-        class="checkbox" 
-        :class="{ 'checked': todo.completed }"
-        @click="handleToggle"
+      <button
+        class="checkbox"
+        :class="{ checked: todo.completed }"
         :title="todo.completed ? '标记为未完成' : '标记为已完成'"
+        @click="handleToggle"
       >
-        <svg 
-          v-if="todo.completed" 
-          class="check-icon" 
-          viewBox="0 0 24 24" 
-          fill="none" 
+        <svg
+          v-if="todo.completed"
+          class="check-icon"
+          viewBox="0 0 24 24"
+          fill="none"
           stroke="currentColor"
         >
-          <polyline points="20,6 9,17 4,12"></polyline>
+          <polyline points="20,6 9,17 4,12" />
         </svg>
       </button>
 
       <!-- 任务文本 -->
       <div class="todo-text-container">
-        <div 
+        <div
           v-if="!isEditing"
           class="todo-text"
           :class="{ 'completed-text': todo.completed }"
-          @dblclick="startEdit"
           :title="'双击编辑 - 创建于 ' + formatDate(todo.createdAt)"
+          @dblclick="startEdit"
         >
           {{ todo.text }}
         </div>
-        
+
         <input
           v-else
           ref="editInput"
@@ -168,7 +168,7 @@ const formatDate = (dateString) => {
           @blur="saveEdit"
           @keydown="handleKeydown"
         />
-        
+
         <div class="todo-meta">
           <span class="created-time">{{ formatDate(todo.createdAt) }}</span>
           <span v-if="todo.completed" class="completed-badge">已完成</span>
@@ -178,49 +178,51 @@ const formatDate = (dateString) => {
 
     <!-- 操作按钮 -->
     <div class="todo-actions">
-      <button 
+      <button
         v-if="!isEditing"
         class="action-button edit-button"
-        @click="startEdit"
         title="编辑任务"
+        @click="startEdit"
       >
         <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path d="m18 2 4 4-14 14H4v-4L18 2z"></path>
+          <path d="m18 2 4 4-14 14H4v-4L18 2z" />
         </svg>
       </button>
-      
-      <button 
+
+      <button
         v-if="isEditing"
         class="action-button save-button"
-        @click="saveEdit"
         title="保存"
+        @click="saveEdit"
       >
         <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <polyline points="20,6 9,17 4,12"></polyline>
+          <polyline points="20,6 9,17 4,12" />
         </svg>
       </button>
-      
-      <button 
+
+      <button
         v-if="isEditing"
         class="action-button cancel-button"
-        @click="cancelEdit"
         title="取消"
+        @click="cancelEdit"
       >
         <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
-      
-      <button 
+
+      <button
         v-if="!isEditing"
         class="action-button delete-button"
-        @click="handleDelete"
         title="删除任务"
+        @click="handleDelete"
       >
         <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <polyline points="3,6 5,6 21,6"></polyline>
-          <path d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2"></path>
+          <polyline points="3,6 5,6 21,6" />
+          <path
+            d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2"
+          />
         </svg>
       </button>
     </div>
@@ -527,48 +529,48 @@ const formatDate = (dateString) => {
   .todo-item {
     padding: 1rem;
   }
-  
+
   .todo-content {
     gap: 0.75rem;
   }
-  
+
   .checkbox {
     width: 20px;
     height: 20px;
   }
-  
+
   .check-icon {
     width: 12px;
     height: 12px;
   }
-  
+
   .todo-text {
     font-size: 0.9rem;
   }
-  
+
   .todo-actions {
     opacity: 1;
     gap: 0.25rem;
   }
-  
+
   .action-button {
     width: 28px;
     height: 28px;
   }
-  
+
   .action-icon {
     width: 14px;
     height: 14px;
   }
-  
+
   .todo-meta {
     margin-top: 0.25rem;
   }
-  
+
   .created-time {
     font-size: 0.7rem;
   }
-  
+
   .completed-badge {
     font-size: 0.65rem;
     padding: 0.1rem 0.4rem;

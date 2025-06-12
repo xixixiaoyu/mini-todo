@@ -5,9 +5,12 @@ import { ref, inject } from 'vue'
 const props = defineProps({
   searchQuery: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
 })
+
+// 使用 props 中的 searchQuery
+const searchQuery = ref(props.searchQuery)
 
 // 定义事件
 const emit = defineEmits(['add-todo', 'update-search', 'clear-search'])
@@ -28,7 +31,7 @@ const handleSubmit = () => {
   }
 }
 
-const handleKeydown = (event) => {
+const handleKeydown = event => {
   if (event.key === 'Enter' && !isComposing.value) {
     event.preventDefault()
     handleSubmit()
@@ -51,7 +54,7 @@ const toggleSearch = () => {
   }
 }
 
-const handleSearchInput = (event) => {
+const handleSearchInput = event => {
   emit('update-search', event.target.value)
 }
 
@@ -67,34 +70,34 @@ const clearSearch = () => {
     <div v-if="showSearch" class="search-container">
       <div class="search-group">
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="m21 21-4.35-4.35"></path>
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
         </svg>
         <input
           :value="searchQuery"
-          @input="handleSearchInput"
           type="text"
           placeholder="搜索任务..."
           class="search-input"
           maxlength="100"
+          @input="handleSearchInput"
         />
-        <button 
+        <button
           v-if="searchQuery"
-          type="button" 
+          type="button"
           class="clear-search-button"
-          @click="clearSearch"
           title="清除搜索"
+          @click="clearSearch"
         >
           <svg class="clear-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
     </div>
 
     <!-- 添加任务表单 -->
-    <form @submit.prevent="handleSubmit" class="form">
+    <form class="form" @submit.prevent="handleSubmit">
       <div class="input-group">
         <input
           v-model="newTodo"
@@ -102,32 +105,37 @@ const clearSearch = () => {
           placeholder="添加新的待办事项..."
           class="todo-input"
           maxlength="200"
+          autofocus
           @keydown="handleKeydown"
           @compositionstart="handleCompositionStart"
           @compositionend="handleCompositionEnd"
-          autofocus
         />
-        <button 
-          type="button" 
+        <button
+          type="button"
           class="search-toggle-button"
-          @click="toggleSearch"
-          :class="{ 'active': showSearch }"
+          :class="{ active: showSearch }"
           title="搜索任务"
+          @click="toggleSearch"
         >
-          <svg class="search-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
+          <svg
+            class="search-toggle-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
           </svg>
         </button>
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           class="add-button"
           :disabled="!newTodo.trim()"
           title="添加任务"
         >
           <svg class="add-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
         </button>
       </div>
@@ -441,34 +449,34 @@ const clearSearch = () => {
   .todo-form {
     padding: 1.5rem 1rem;
   }
-  
+
   .input-group {
     gap: 0.5rem;
   }
-  
+
   .todo-input {
     padding: 0.875rem 1rem;
     font-size: 1rem;
   }
-  
+
   .search-input {
     font-size: 1rem;
   }
-  
+
   .add-button {
     padding: 0.875rem;
     min-width: 48px;
   }
-  
+
   .add-icon {
     width: 18px;
     height: 18px;
   }
-  
+
   .input-hint {
     font-size: 0.8rem;
   }
-  
+
   .hint-text::before {
     display: none;
   }
@@ -487,7 +495,8 @@ const clearSearch = () => {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
