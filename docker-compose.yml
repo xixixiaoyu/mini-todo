@@ -24,6 +24,11 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_USERNAME=todolist_user
+      - DB_PASSWORD=todolist_password
+      - DB_NAME=todolist
     depends_on:
       - database
     networks:
