@@ -156,7 +156,7 @@ curl http://localhost:3000/health # 后端
 
 ```bash
 FRONTEND_PORT=8080
-BACKEND_PORT=3001
+BACKEND_PORT=3000
 ```
 
 ### 权限问题

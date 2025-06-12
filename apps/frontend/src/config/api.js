@@ -4,7 +4,7 @@
  */
 
 // 根据环境变量或开发/生产环境设置 API 基础 URL
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
 
 /**
  * API 配置对象
@@ -23,16 +23,16 @@ export const apiConfig = {
 export const endpoints = {
   // 待办事项相关端点
   todos: {
-    list: 'todos',                    // GET - 获取所有待办事项
-    create: 'todos',                  // POST - 创建待办事项
-    getById: (id) => `todos/${id}`,   // GET - 获取单个待办事项
-    update: (id) => `todos/${id}`,    // PUT - 更新待办事项
-    delete: (id) => `todos/${id}`,    // DELETE - 删除待办事项
-    toggle: (id) => `todos/${id}/toggle`, // PUT - 切换完成状态
-    stats: 'todos/stats',             // GET - 获取统计信息
+    list: 'todos', // GET - 获取所有待办事项
+    create: 'todos', // POST - 创建待办事项
+    getById: id => `todos/${id}`, // GET - 获取单个待办事项
+    update: id => `todos/${id}`, // PUT - 更新待办事项
+    delete: id => `todos/${id}`, // DELETE - 删除待办事项
+    toggle: id => `todos/${id}/toggle`, // PUT - 切换完成状态
+    stats: 'todos/stats', // GET - 获取统计信息
     clearCompleted: 'todos/completed', // DELETE - 清除已完成
-    toggleAll: 'todos/toggle-all',    // PUT - 切换所有状态
-    reorder: 'todos/reorder',         // PUT - 重新排序
+    toggleAll: 'todos/toggle-all', // PUT - 切换所有状态
+    reorder: 'todos/reorder', // PUT - 重新排序
   },
 }
 

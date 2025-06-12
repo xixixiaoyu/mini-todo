@@ -220,7 +220,7 @@ class HttpClient {
 
 ```javascript
 export const apiConfig = {
-  baseURL: 'http://localhost:3001/api', // API 基础地址
+  baseURL: 'http://localhost:3000/api', // API 基础地址
   timeout: 10000,                       // 请求超时时间（毫秒）
   headers: {
     'Content-Type': 'application/json', // 默认请求头
