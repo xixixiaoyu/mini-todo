@@ -1,5 +1,5 @@
 # 后端 Dockerfile - 多阶段构建
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # 安装 pnpm
 RUN npm install -g pnpm@8.15.0

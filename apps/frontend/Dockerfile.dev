@@ -1,5 +1,5 @@
 # 前端开发 Dockerfile
-FROM node:18-alpine
+FROM node:20-alpine
 
 # 安装 pnpm
 RUN npm install -g pnpm@8.15.0
