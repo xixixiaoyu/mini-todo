@@ -149,6 +149,27 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    # 验证必要的 secrets 是否已配置
+    - name: Verify deployment secrets
+      run: |
+        if [ -z "${{ secrets.PRODUCTION_HOST }}" ]; then
+          echo "❌ PRODUCTION_HOST secret is not configured"
+          exit 1
+        fi
+        if [ -z "${{ secrets.PRODUCTION_USER }}" ]; then
+          echo "❌ PRODUCTION_USER secret is not configured"
+          exit 1
+        fi
+        if [ -z "${{ secrets.PRODUCTION_SSH_KEY }}" ]; then
+          echo "❌ PRODUCTION_SSH_KEY secret is not configured"
+          exit 1
+        fi
+        if [ -z "${{ secrets.PRODUCTION_URL }}" ]; then
+          echo "❌ PRODUCTION_URL secret is not configured"
+          exit 1
+        fi
+        echo "✅ All deployment secrets are configured"
+
     - name: Deploy to production
       uses: appleboy/ssh-action@v1.0.0
       with:
